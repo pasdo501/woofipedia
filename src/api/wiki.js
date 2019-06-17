@@ -12,7 +12,7 @@ class WikiAPI {
             `&iwurl=1` +
             `&titles=1` +
             `&generator=search` +
-            `&exchars=350` +
+            `&exsentences=4` +
             `&exlimit=1` +
             `&exintro=1` +
             `&explaintext=1` +
