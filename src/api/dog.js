@@ -62,7 +62,7 @@ class DogAPI {
         // Replace spaces with slash & flip so master breed comes first
         // for the API
         breed = breed.split(' ').reverse().join('/');
-        console.log(breed);
+        
         try {
             const response = await fetch(`${DogAPI.ApiBase}/breed/${breed}/images/random`);
             const json = await response.json();
