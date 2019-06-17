@@ -1,7 +1,5 @@
 import React from "react";
 
-import "./Header.css";
-
 const Header = () => (
     <header>
         <section className="hero is-dark is-bold">

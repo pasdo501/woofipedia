@@ -10,16 +10,20 @@ class WikiAPI {
             `&prop=extracts%7Cinfo` +
             `&list=search` +
             `&iwurl=1` +
-            `&continue=gsroffset%7C%7C` +
+            `&titles=1` +
             `&generator=search` +
             `&exchars=350` +
+            `&exlimit=1` +
             `&exintro=1` +
             `&explaintext=1` +
             `&exsectionformat=plain` +
             `&inprop=url` +
-            `&srsearch=${encodedSearchTerm}` +
+            `&srsearch=intitle%3A${encodedSearchTerm}` +
+            `&srnamespace=0` +
             `&srlimit=1` +
+            `&srprop=` +
             `&gsrsearch=intitle%3A${encodedSearchTerm}` +
+            `&gsrnamespace=0` +
             `&gsrlimit=1`
         );
     }

@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => (
     <footer className="footer">
-        <div class="content has-text-centered">
+        <div className="content has-text-centered">
             <p>
                 Project powered by{" "}
                 <a href="https://dog.ceo/dog-api/">Dog API</a> and the{" "}
