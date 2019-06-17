@@ -1,0 +1,9 @@
+@charset "utf-8";
+
+@import "../node_modules/bulma/bulma";
+
+html {
+    /* Overwrite Bulma's overflow-y: scroll to not have
+        the vertical scrollbar visible at all times ... */
+    overflow: auto;
+}
