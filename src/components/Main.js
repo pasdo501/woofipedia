@@ -3,6 +3,7 @@ import Info from "./Info";
 import Loading from "./Loading";
 
 import WikiAPI from "../api/wiki";
+import DogAPI from "../api/dog";
 
 class Main extends Component {
     state = {
@@ -10,6 +11,7 @@ class Main extends Component {
         extract: "",
         url: "",
         title: "",
+        image: "",
         loading: false,
     };
 
@@ -40,6 +42,22 @@ class Main extends Component {
         }));
     };
 
+    testDogApi = async () => {
+        const breed = await DogAPI.getRandomDogBreed();
+        const image = await DogAPI.getDogImage(breed);
+        
+
+        // Add 'dog' as suffix to make it more likely that the result from
+        // wikipedia will actually be referring to a dog
+        this.setState(() => ({ 
+            input: breed.concat(' dog'),
+            image
+        }));
+
+
+        this.handleClick();
+    }
+
     handleChange = (event) => {
         const value = event.target.value;
 
@@ -47,7 +65,7 @@ class Main extends Component {
     };
 
     render() {
-        const { extract, url, title, loading } = this.state;
+        const { extract, url, title, image, loading } = this.state;
 
         return (
             <div>
@@ -67,8 +85,12 @@ class Main extends Component {
                 {loading ? (
                     <Loading />
                 ) : (
-                    <Info extract={extract} url={url} title={title} />
+                    <Info extract={extract} url={url} title={title} image={image} />
                 )}
+
+                <button className="button is-dark is-outlined" onClick={this.testDogApi}>
+                    Dog API Test
+                </button>
             </div>
         );
     }
