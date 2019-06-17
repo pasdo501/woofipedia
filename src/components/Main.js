@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Info from "./Info";
+import Loading from "./Loading";
 
 import WikiAPI from "../api/wiki";
 
@@ -8,10 +9,19 @@ class Main extends Component {
         input: "",
         extract: "",
         url: "",
-        title: ""
+        title: "",
+        loading: false,
     };
 
     handleClick = async () => {
+        if (this.state.loading) {
+            return;
+        }
+
+        this.setState(() => ({
+            loading: true,
+        }));
+
         const dogInfo = await WikiAPI.searchPage(this.state.input);
 
         if (dogInfo !== null) {
@@ -20,9 +30,14 @@ class Main extends Component {
             this.setState(() => ({
                 extract,
                 url,
-                title
+                title,
+                loading: false,
             }));
         }
+
+        this.setState(() => ({
+            loading: false,
+        }));
     };
 
     handleChange = (event) => {
@@ -32,8 +47,8 @@ class Main extends Component {
     };
 
     render() {
-        const { extract, url, title } = this.state;
-        
+        const { extract, url, title, loading } = this.state;
+
         return (
             <div>
                 <p>The main component</p>
@@ -49,11 +64,11 @@ class Main extends Component {
                 >
                     Trigger
                 </button>
-                <Info 
-                    extract={extract}
-                    url={url}
-                    title={title}
-                />
+                {loading ? (
+                    <Loading />
+                ) : (
+                    <Info extract={extract} url={url} title={title} />
+                )}
             </div>
         );
     }
