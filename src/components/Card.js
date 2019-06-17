@@ -17,7 +17,7 @@ const Card = ({ extract, url, image, title }) => (
                             )}
                         </figure>
                     </div>
-                    <div className="column">
+                    <div className="column has-text-left">
                         {extract}
                         <br />
                         <a href={url}>[Read More]</a>
