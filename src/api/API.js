@@ -20,6 +20,8 @@ class API {
                 const json = await response.json();
 
                 return json;
+            } else {
+                return null;
             }
         } catch (error) {
             console.warn(error);
