@@ -8,7 +8,7 @@ const Card = ({ extract, url, image, title }) => (
         <div className="card-content">
             <div className="content">
                 <div className="columns is-vcentered">
-                    <div className="column">
+                    <div className="column is-narrow">
                         <figure className="image">
                             {image ? (
                                 <img src={image} alt={title} />
