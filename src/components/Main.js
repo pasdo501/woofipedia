@@ -64,7 +64,7 @@ class Main extends Component {
                     } ${styles.button}`}
                     onClick={this.testDogApi}
                 >
-                    Learn About A Dog
+                    {title ? "Learn About Another Dog" : "Learn About A Dog"}
                 </button>
 
                 {loading ? (
