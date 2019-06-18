@@ -8,6 +8,12 @@ import API from "./API";
 class DogAPI extends API {
     apiBase = "https://dog.ceo/api";
 
+    /**
+     * Constructs a list of dog breeds, based on information from the
+     * Dog API. Result is stored in local storage.
+     * 
+     * @return {array} The list
+     */
     async constructBreedList() {
         const endpoint = `${this.apiBase}/breeds/list/all`;
 
@@ -39,34 +45,48 @@ class DogAPI extends API {
         return breedList;
     }
 
-    async maybeConstructBreedList() {
+    /**
+     * Gets a list of dog breeds.
+     * 
+     * May be present in local storage. If not, construct a new one.
+     * 
+     * @return {array} The list
+     */
+    async getBreedList() {
         const storedList = localStorage.getItem("woofipedia_breed_list");
 
         if (storedList === null) {
+            // List is not available in local storage, construct a new one
             const list = await this.constructBreedList();
 
             return list;
         } else {
+            // List was available in local storage
             return JSON.parse(storedList);
         }
     }
 
-    async getBreedList() {
-        const breedList = await this.maybeConstructBreedList();
-
-        return breedList;
-    }
-
+    /**
+     * Select a random dog breed from a list.
+     * 
+     * @return {string} The randomly chosen breed
+     */
     async getRandomDogBreed() {
-        const breeds = await this.maybeConstructBreedList();
+        const breeds = await this.getBreedList();
         const randomIndex = Math.floor(Math.random() * breeds.length);
 
         return breeds[randomIndex];
     }
 
+    /**
+     * Get a random image for a given breed from the Dog API.
+     * 
+     * @param {string} breed The breed for which the image is fetched
+     * 
+     * @return {string|null} Either an url for the image or null if none found
+     */
     async getDogImage(breed) {
-        // Replace spaces with slash & flip so master breed comes first
-        // for the API
+        // Replace spaces with '/' & flip so master breed comes first for the API
         breed = breed
             .split(" ")
             .reverse()

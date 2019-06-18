@@ -7,7 +7,7 @@ class API {
      * Options can be supplied, but are optional.
      * 
      * @param {string} endpoint The endpoint to query
-     * @param {obj} options (Optional) An object containing options for the fetch API
+     * @param {obj} [options = {}] (Optional) An object containing options for the fetch API
      * 
      * @return {obj|null} Either the response in JSON format or null
      */

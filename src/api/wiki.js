@@ -6,6 +6,19 @@ import API from "./API";
  * @extends API
  */
 class WikiAPI extends API {
+
+    /**
+     * Constructs an endpoint for the MediaWiki Action API to search
+     * for a given term.
+     * 
+     * Note: The constructed URL only requests a single result
+     * 
+     * @link https://www.mediawiki.org/wiki/API:Main_page
+     * 
+     * @param {string} searchTerm The search term
+     * 
+     * @return {string} The endpoint.
+     */
     getEndpoint(searchTerm) {
         const encodedSearchTerm = encodeURIComponent(searchTerm);
 
@@ -35,6 +48,19 @@ class WikiAPI extends API {
         );
     }
 
+    /**
+     * Use the MediaWiki API to search pages for a given term, return page data.
+     * 
+     * Searches Wikipedia for a given search term. If no result is found, the
+     * search response is checked for a search suggestion from Wikipedia. If
+     * found, the function calls itself to try again with the search suggestion.
+     * 
+     * @param {string} searchTerm The search term.
+     * @param {boolean} recursive Whather this function has already called itself
+     * 
+     * @return {obj|null} Null if no result could be found, or an object containing
+     *  information about the result's extract, title, & url
+     */
     async searchPage(searchTerm, recursive = false) {
         const response = await this.getResponse(this.getEndpoint(searchTerm));
 
