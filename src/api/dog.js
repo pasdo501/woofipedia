@@ -1,43 +1,49 @@
-class DogAPI {
-    static ApiBase = 'https://dog.ceo/api';
+import API from "./API";
 
+/**
+ * Class to handle Dog API requests
+ *
+ * @extends API
+ */
+class DogAPI extends API {
+    apiBase = "https://dog.ceo/api";
 
-    static async constructBreedList() {
-        const endpoint = `${DogAPI.ApiBase}/breeds/list/all`;
+    async constructBreedList() {
+        const endpoint = `${this.apiBase}/breeds/list/all`;
 
-        const response = await fetch(endpoint);
-        if (response.status === 200) {
-            const json = await response.json();
+        const response = await this.getResponse(endpoint);
 
-            if (! json) {
-                return null;
-            }
-
-            const rawList = json.message;
-            const breedList = [];
-
-            for (let breed in rawList) {
-                const subBreedCount = rawList[breed].length;
-
-                if (subBreedCount > 0) {
-                    rawList[breed].forEach(subBreed => {
-                        breedList.push(subBreed.concat(' ', breed));
-                    })
-                } else {
-                    breedList.push(breed);
-                }
-            }
-
-            localStorage.setItem('woofipedia_breed_list', JSON.stringify(breedList));
-            return breedList;
+        if (response === null) {
+            return null;
         }
+
+        const rawList = response.message;
+        const breedList = [];
+
+        for (let breed in rawList) {
+            const subBreedCount = rawList[breed].length;
+
+            if (subBreedCount > 0) {
+                rawList[breed].forEach((subBreed) => {
+                    breedList.push(subBreed.concat(" ", breed));
+                });
+            } else {
+                breedList.push(breed);
+            }
+        }
+
+        localStorage.setItem(
+            "woofipedia_breed_list",
+            JSON.stringify(breedList)
+        );
+        return breedList;
     }
 
-    static async maybeConstructBreedList() {
-        const storedList = localStorage.getItem('woofipedia_breed_list');
+    async maybeConstructBreedList() {
+        const storedList = localStorage.getItem("woofipedia_breed_list");
 
         if (storedList === null) {
-            const list = await DogAPI.constructBreedList();
+            const list = await this.constructBreedList();
 
             return list;
         } else {
@@ -45,42 +51,40 @@ class DogAPI {
         }
     }
 
-    static async getBreedList() {
-        const breedList = await DogAPI.maybeConstructBreedList();
+    async getBreedList() {
+        const breedList = await this.maybeConstructBreedList();
 
         return breedList;
     }
 
-    static async getRandomDogBreed() {
-        const breeds = await DogAPI.maybeConstructBreedList();
+    async getRandomDogBreed() {
+        const breeds = await this.maybeConstructBreedList();
         const randomIndex = Math.floor(Math.random() * breeds.length);
 
         return breeds[randomIndex];
     }
 
-    static async getDogImage(breed) {
+    async getDogImage(breed) {
         // Replace spaces with slash & flip so master breed comes first
         // for the API
-        breed = breed.split(' ').reverse().join('/');
-        
-        try {
-            const response = await fetch(`${DogAPI.ApiBase}/breed/${breed}/images/random`);
-            const json = await response.json();
+        breed = breed
+            .split(" ")
+            .reverse()
+            .join("/");
+        const endpoint = `${this.apiBase}/breed/${breed}/images/random`;
 
-            if(json.status === 'success') {
-                const imageUrl = json.message;
+        const response = await this.getResponse(endpoint);
 
-                return imageUrl
-            } else {
-                alert('Oh no! There has been an error with the API connection. Please try again later or let me know if the problem persists.');
-                return null;
-            }
-        } catch(error) {
-            alert('Oh no! There has been an error with the API connection. Please try again later or let me know if the problem persists.');
+        if (response === null) {
+            console.warn(
+                "Dog API connection issue"
+            );
             return null;
         }
+
+        // response.message is the image URL
+        return response.message;
     }
 }
-
 
 export default DogAPI;

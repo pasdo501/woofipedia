@@ -3,7 +3,7 @@ import React from "react";
 const Card = ({ extract, url, image, title }) => (
     <div className="card">
         <header className="card-header">
-            <div className="card-header-title">{title}</div>
+            <div className="card-header-title is-size-3">{title}</div>
         </header>
         <div className="card-content">
             <div className="content">

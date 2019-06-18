@@ -8,6 +8,9 @@ import DogAPI from "../api/dog";
 import styles from "./Main.module.css";
 
 class Main extends Component {
+    wikiAPI = new WikiAPI();
+    dogAPI = new DogAPI();
+
     state = {
         input: "",
         extract: "",
@@ -17,7 +20,7 @@ class Main extends Component {
         loading: false,
     };
 
-    testDogApi = async () => {
+    getDogInfo = async () => {
         if (this.state.loading) {
             return;
         }
@@ -25,12 +28,14 @@ class Main extends Component {
             loading: true,
         }));
 
-        const breed = await DogAPI.getRandomDogBreed();
-        const image = await DogAPI.getDogImage(breed);
+        const { dogAPI, wikiAPI } = this;
+
+        const breed = await dogAPI.getRandomDogBreed();
+        const image = await dogAPI.getDogImage(breed);
 
         // Add 'dog' as suffix to make it more likely that the result from
         // wikipedia will actually be referring to a dog
-        const dogInfo = await WikiAPI.searchPage(breed.concat(" dog"));
+        const dogInfo = await wikiAPI.searchPage(breed.concat(" dog"));
 
         if (dogInfo !== null) {
             const { extract, url, title } = dogInfo;
@@ -43,14 +48,11 @@ class Main extends Component {
                 loading: false,
             }));
         } else {
+            alert(
+                "Uh oh! Something went wrong. A dog ate the server's response - please try again."
+            );
             this.setState(() => ({ loading: false }));
         }
-    };
-
-    handleChange = (event) => {
-        const value = event.target.value;
-
-        this.setState(() => ({ input: value }));
     };
 
     render() {
@@ -62,7 +64,7 @@ class Main extends Component {
                     className={`button is-medium is-dark is-outlined ${
                         loading ? "is-loading is-disabled" : ""
                     } ${styles.button}`}
-                    onClick={this.testDogApi}
+                    onClick={this.getDogInfo}
                 >
                     {title ? "Learn About Another Dog" : "Learn About A Dog"}
                 </button>
