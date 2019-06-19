@@ -30,11 +30,14 @@ class Main extends Component {
         const { dogAPI, wikiAPI } = this;
 
         const breed = await dogAPI.getRandomDogBreed();
-        const image = await dogAPI.getDogImage(breed);
+
+        const image = breed ? await dogAPI.getDogImage(breed) : null;
 
         // Add 'dog' as suffix to make it more likely that the result from
         // wikipedia will actually be referring to a dog
-        const dogInfo = await wikiAPI.searchPage(breed.concat(" dog"));
+        const dogInfo = breed
+            ? await wikiAPI.searchPage(breed.concat(" dog"))
+            : null;
 
         if (dogInfo !== null) {
             const { extract, url, title } = dogInfo;
