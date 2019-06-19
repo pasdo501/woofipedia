@@ -12,7 +12,6 @@ class Main extends Component {
     dogAPI = new DogAPI();
 
     state = {
-        input: "",
         extract: "",
         url: "",
         title: "",
