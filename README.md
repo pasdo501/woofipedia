@@ -2,7 +2,12 @@
 
 This is a small project integrating the [MediaWiki Action API](https://www.mediawiki.org/wiki/API:Main_page) and [Dog API](https://dog.ceo/dog-api/) with React.
 
+The project is currently deployed at http://woofipedia.surge.sh.
+<br>
+<br>
 <hr>
+<br>
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
