@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 const loadingStyle = {
     textAlign: `center`,
@@ -7,35 +7,25 @@ const loadingStyle = {
     marginBottom: `6em`,
 };
 
-class Loading extends Component {
-    static defaultProps = {
-        text: "Loading",
-        speed: 300,
-    };
+function Loading ({ text = "Loading", speed = 300 }) {
+    const [content, setContent] = React.useState(text)
 
-    state = {
-        text: this.props.text,
-    };
+    React.useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            setContent((content) => content === `${text}...`
+                ? text
+                : `${content}.`
+            )
+        }, speed)
 
-    componentDidMount() {
-        const { text, speed } = this.props;
-        const stopper = text + "...";
-        this.interval = window.setInterval(() => {
-            this.state.text === stopper
-                ? this.setState(() => ({ text }))
-                : this.setState((prevState) => ({
-                      text: prevState.text + ".",
-                  }));
-        }, speed);
-    }
+        return () => window.clearInterval(intervalId);
+    }, [text, speed])
 
-    componentWillUnmount() {
-        window.clearInterval(this.interval);
-    }
-
-    render() {
-        return <p style={loadingStyle}>{this.state.text}</p>;
-    }
+    return (
+        <p style={loadingStyle}>
+            {content}
+        </p>
+    )
 }
 
 export default Loading;

@@ -23,7 +23,7 @@ function App() {
                 </p>
                 <Main />
             </section>
-                <Footer />
+            <Footer />
         </div>
     );
 }
