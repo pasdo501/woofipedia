@@ -1,45 +1,44 @@
 import React from "react";
-import { create } from "react-test-renderer";
+import { shallow } from "enzyme";
 import Info from "../components/Info";
-import Card from "../components/Card";
 
 describe("Info component", () => {
-    test("it renders a message when no data is available", () => {
-        const component = create(<Info extract="" url="" title="" image="" />);
-        const rootInstance = component.root;
+  let wrapper;
+  const infoProps = {
+    extract: "foo",
+    url: "foo",
+    title: "foo",
+    image: "foo",
+  };
 
-        const infoDiv = rootInstance.findByType(Info).findByType("div");
+  test("it renders a message when no data is available", () => {
+    wrapper = shallow(<Info extract="" url="" title="" image="" />);
 
-        expect(infoDiv.props.children).toBe("No dog information fetched yet!");
-    });
+    expect(
+      wrapper
+        .children()
+        .first()
+        .text()
+    ).toBe("No dog information fetched yet!");
+  });
 
-    test("it does not render the no data message when data is available", () => {
-        const component = create(
-            <Info extract="foo" url="foo" title="foo" image="foo" />
-        );
-        const rootInstance = component.root;
+  test("it does not render the no data message when data is available", () => {
+    wrapper = shallow(<Info {...infoProps} />);
 
-        const infoDiv = rootInstance.findByType(Info).findByType("div");
+    expect(
+      wrapper
+        .children()
+        .first()
+        .text()
+    ).not.toBe("No dog information fetched yet!");
+  });
 
-        expect(infoDiv.props.children).not.toBe("No dog information fetched yet!");
-    });
+  test("it passes the correct props to the dog information card when data is available", () => {
+    wrapper = shallow(<Info {...infoProps} />);
 
-    test("it renders the dog information card when data is available", () => {
-        const infoProps = {
-            extract: "foo",
-            url: "foo",
-            title: "foo",
-            image: "foo"
-        }
-        
-        const component = create(
-            <Info {...infoProps} />
-        );
-        const rootInstance = component.root;
+    const card = wrapper.find("Card");
 
-        const card = rootInstance.findByType(Card);
-
-        expect(card).not.toBe(null);
-        expect(card.props).toMatchObject(infoProps);
-    })
+    expect(card).not.toBe(null);
+    expect(card.props()).toMatchObject(infoProps);
+  });
 });
