@@ -14,8 +14,12 @@ describe("Main component", () => {
     let button;
 
     const dogApiListResponse = JSON.stringify({
-        message: { germanshepherd: "", hound: ["afghan"] },
+        message: { germanshepherd: "" },
     });
+
+    // const dogApiListResponseMulti = JSON.stringify({
+    //     message: { hound: ["afghan"] },
+    // });
 
     const dogApiImageResponse = JSON.stringify({
         message: "https://images.dog.ceo/breeds/germanshepherd/image.jpg",
@@ -71,14 +75,26 @@ describe("Main component", () => {
 
         await act(async () => {
             button.simulate('click');
-            expect(fetch.mock.calls.length).toBe(1)
         })
         
         wrapper.update();
-        // After the button push has completed
-        expect(fetch.mock.calls.length).toBe(3)
         expect(button.text()).toBe("Learn About Another Dog");
-        
+    });
+
+    test("it correctly fetches data and passes to Info component when clicked", async () => {
+        fetch
+            .once(dogApiListResponse)
+            .once(dogApiImageResponse)
+            .once(wikiResponse);
+
+        await act(async () => {
+            button.simulate('click');
+            expect(fetch.mock.calls.length).toBe(1)
+        })
+        wrapper.update();
+
+        expect(fetch.mock.calls.length).toEqual(3);
+
         const infoProps = wrapper.find('Info').first().props();
         const wikiResponses = JSON.parse(wikiResponse).query.pages.pagekey;
         expect(infoProps.extract).toBe(wikiResponses.extract)
@@ -87,50 +103,57 @@ describe("Main component", () => {
         expect(infoProps.image).toBe(JSON.parse(dogApiImageResponse).message)
     });
 
-    // test("it correctly fetches data when clicked", async () => {
-    //     fetch
-    //         .once(dogApiListResponse)
-    //         .once(dogApiImageResponse)
-    //         .once(wikiResponse);
+    test("it correctly sets local storage to save on api calls", async () => {
+        fetch
+            .once(dogApiListResponse)
+            .once(dogApiImageResponse)
+            .once(wikiResponse);
 
-    //     await button.props.onClick();
-    //     expect(fetch.mock.calls.length).toEqual(3);
+        await act(async () => {
+            button.simulate('click');
+        })
+        wrapper.update();
 
+        expect(fetch.mock.calls.length).toEqual(3);
+        expect(localStorage.getItem("woofipedia_breed_list")).toEqual(JSON.stringify(["germanshepherd"]))
 
-    //     expect(instance.state.extract).toBe("An extract about a dog");
-    //     expect(instance.state.title).toBe("A Dog");
-    //     expect(instance.state.url).toBe("https://en.wikipedia.org/wiki/a_dog");
-    //     expect(instance.state.image).toBe("https://images.dog.ceo/breeds/germanshepherd/image.jpg");
-    // });
+        // To ensure the next random breed will lead to a state update just
+        // the element and remount it
+        wrapper.unmount();
+        wrapper = mount(<Main />)
+        button = wrapper.find('button');
 
-    // test("it correctly sets local storage to save on api calls", async () => {
-    //     fetch
-    //         .once(dogApiListResponse)
-    //         .once(dogApiImageResponse)
-    //         .once(wikiResponse);
+        fetch
+            .once(dogApiImageResponse)
+            .once(wikiResponse)
+            .once({ message: 'Undefined, shouldn\'t get here' });
 
-    //     await button.props.onClick();
-    //     expect(fetch.mock.calls.length).toEqual(3);
+        await act(async () => {
+            button.simulate('click');
+        })
+        wrapper.update();
 
-    //     fetch
-    //         .once(dogApiImageResponse)
-    //         .once(wikiResponse)
-    //         .once({ message: 'Undefined, shouldn\'t get here' });
+        expect(fetch.mock.calls.length).toEqual(5);
+    })
 
-    //     await button.props.onClick();
-    //     expect(fetch.mock.calls.length).toEqual(5);
-    // })
+    test("it correctly handles wikipedia's search suggestion", async () => {
+        fetch
+            .once(dogApiListResponse)
+            .once(dogApiImageResponse)
+            .once(wikiResponseWithSuggestion)
+            .once(wikiResponse);
 
-    // test("it correctly handles wikipedia's search suggestion", async () => {
-    //     fetch
-    //         .once(dogApiListResponse)
-    //         .once(dogApiImageResponse)
-    //         .once(wikiResponseWithSuggestion)
-    //         .once(wikiResponse);
+        await act(async () => {
+            button.simulate('click');
+        })
+        wrapper.update();
+        expect(fetch.mock.calls.length).toEqual(4);
 
-    //     await button.props.onClick();
-    //     expect(fetch.mock.calls.length).toEqual(4);
+        // Extract the title search parameter of the second wikipedia API call
+        // This should be the suggestion from the first call's response
+        const titleParam = fetch.mock.calls[3][0].match(/intitle%3A(:?[^&]+)/)[1]
 
-    //     expect(instance.state.title).toBe("A Dog");
-    // })
+        expect(titleParam).toBe(JSON.parse(wikiResponseWithSuggestion).query.searchinfo.suggestion)
+        expect(wrapper.find('Info').first().props().title).toBe("A Dog");
+    })
 });
