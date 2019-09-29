@@ -1,5 +1,4 @@
 import React from "react";
-import Helmet from "react-helmet";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Footer from "./components/Footer";
@@ -9,7 +8,6 @@ import "./App.scss";
 function App() {
     return (
         <div className="App">
-            <Helmet title="Woofipedia" />
             <Header />
             <section className="section container has-text-centered">
                 <p className="is-size-3">Welcome to Woofipedia!</p>
